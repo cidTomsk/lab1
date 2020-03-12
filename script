@@ -1,0 +1,177 @@
+#!/bin/bash
+echo "Use this program to set access rights to the
+second file based on the pattern of the first file"
+echo "Developer Chernov Ilya"
+while true
+do
+        echo "Current path  $PWD"    # Вывод текущего пути
+        while true
+        do
+                read -p "Enter path to file one: " file1
+                if test -f "$file1"
+                then
+                        echo "file1 found"
+                        break
+                else
+                        echo "file1 not found"
+                        echo "file1 not found" >&2   # Направление выывода в поток ошибок
+                        read -p "retry? (Y): " answer
+                        if  [ $answer == "Y" ]
+                        then
+                                continue
+                        else
+                                echo "Exit"
+                                exit 1
+ 			fi
+
+                fi
+        done
+        while true
+        do
+                read -p "Enter path to file one: " file2
+                if test -f "$file2"
+                then
+                        echo "file2 found"
+                        break
+                else
+                        echo "file2 not found"
+                        echo "file2 not found" >&2
+                        read -p "retry? (Y): " answer
+                        if  [ $answer == "Y" ]
+                        then
+                                continue
+                        else
+                                echo "Exit"
+                                exit 2
+                        fi
+
+                fi
+
+        done
+
+        allrights1=`ls -lh $file1`           # Считывание прав 1го файла
+        rights1=${allrights1:1:9}			 # Получение прав в виде drwxrwxrwx  при помощи среза строки
+        echo "    rights for file1 $rights1" 
+        allrights2=`ls -lh $file2`
+        rights2=${allrights2:1:9}
+        echo "    rights for file2 $rights2"
+        r1=${rights1:0:1}
+        w1=${rights1:1:1}
+        x1=${rights1:2:1}
+        r2=${rights1:3:1}
+        w2=${rights1:4:1}
+        x2=${rights1:5:1}
+        r3=${rights1:6:1}
+        w3=${rights1:7:1}
+        x3=${rights1:8:1}
+        num=0                                 # переменная для численного формата прав для передачи команде chmod
+        if [ $r1 == "r" ]                     # перевод пра в виде drwxrwxrwx  в численный формат
+        then
+                r1=1
+                tmp=400
+                num=$(($num+$tmp))
+        else
+ 		r1=0
+        fi
+
+        if [ $w1 == "w" ]
+        then
+                w1=1
+                tmp=200
+                num=$(($num+$tmp))
+        else
+                w1=0
+        fi
+
+        if [ $x1 == "x" ]
+        then
+                x1=1
+                tmp=100
+                num=$(($num+$tmp))
+        else
+                x1=0
+        fi
+
+        if [ $r2 == "r" ]
+        then
+                r2=1
+
+ 		tmp=40
+                num=$(($num+$tmp))
+        else
+                r2=0
+        fi
+
+        if [ $w2 == "w" ]
+        then
+                w2=1
+                tmp=20
+                num=$(($num+$tmp))
+        else
+                w2=0
+        fi
+
+        if [ $x2 == "x" ]
+        then
+                x2=1
+                tmp=10
+                num=$(($num+$tmp))
+        else
+                x2=0
+        fi
+
+	if [ $r3 == "r" ]
+        then
+                r3=1
+                tmp=4
+                num=$(($num+$tmp))
+        else
+                r3=0
+        fi
+
+        if [ $w3 == "w" ]
+        then
+                w3=1
+                tmp=2
+                num=$(($num+$tmp))
+        else
+                w3=0
+        fi
+
+        if [ $x3 = "x" ]
+        then
+                x3=1
+                tmp=1
+                num=$(($num+$tmp))
+        else
+ 		x3=0
+        fi
+        echo " bin version for rights  "
+        echo " $r1 $w1 $x1 $r2 $w2 $x2 $r3 $w3 $x3 "
+        echo " num version for rights  "
+        echo "$num"
+        chmod $num $file2
+        newallrights2=`ls -lh $file2`
+        newrights2=${newallrights2:1:9}
+        echo "    new rights for file2 $newrights2"
+
+        read -p "Continue? (Y): " answer
+        if  [ $answer == "Y" ]
+        then
+                continue
+        else
+                echo "Exit"
+                exit 3
+        fi
+done
+
+	
+
+
+
+
+
+
+
+
+
